@@ -1,0 +1,8 @@
+MOD_NAME=consolebanner
+MOD_VERSION=0.1.0
+MOD_LONG_NAME="[3.1] Console Zone Banner"
+MOD_INFO="Shows each active firewall zone's device, link state and IP, plus disk health, color-coded, on the physical console login screen."
+MOD_DIR=/var/smoothwall/mods/consolebanner
+MOD_AUTHOR=petter5
+MOD_MAINTAINER=petter5
+MOD_FORUM=

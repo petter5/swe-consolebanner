@@ -1,0 +1,6 @@
+#!/bin/bash
+# Safety-net refresh of the console zone-status banner every ~5 minutes
+# (run-parts cron.often), in case GREEN/ORANGE or disk health change -
+# those don't go through the rc.updatered "on RED up" hook that already
+# covers RED.
+exec /var/smoothwall/mods/consolebanner/bin/gen-banner.sh

@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+
+use Term::ANSIColor;
+use Cwd;
+
+my $mods_home  = "/var/smoothwall/mods";
+my $modsa_home = "/var/smoothwall/mods-available";
+my $mod_name   = "consolebanner";
+
+my $cwd = getcwd();
+
+unless (-f "$cwd/DETAILS" && -f "$cwd/bin/gen-banner.sh") {
+	die colored("This doesn't look like a consolebanner source directory (no DETAILS/bin/gen-banner.sh here).\n", "bold red");
+}
+
+print colored("Install the $mod_name mod to your smoothie? ", "bold cyan");
+my $ans = readline();
+chomp($ans);
+unless ($ans =~ /^[Yy](?:es)?/) {
+	print colored("Quitting.\n", "bold red");
+	exit 0;
+}
+
+system("/bin/mkdir -p $modsa_home") unless (-d $modsa_home);
+system("/bin/mkdir -p $modsa_home/$mod_name") unless (-d "$modsa_home/$mod_name");
+system("/bin/cp -rf $cwd/* $modsa_home/$mod_name/") == 0
+	or die colored("Couldn't copy mod files into $modsa_home/$mod_name: $!\n", "bold red");
+system("/bin/chmod 755 $modsa_home/$mod_name/bin/gen-banner.sh $modsa_home/$mod_name/etc/rc.d/00rc.updatered $modsa_home/$mod_name/etc/cron.often/gen-console-banner");
+
+chdir($mods_home) or die colored("Couldn't chdir to $mods_home: $!\n", "bold red");
+system("/bin/ln -snf ../mods-available/$mod_name $mod_name");
+
+# Smoothwall's crontab finds mods' cron.* hooks with
+# `find /etc /var/smoothwall/mods -regex '.*/etc/cron.often'`, but plain
+# find does not descend into a directory reached through a symlink - so
+# with $mod_name symlinked from mods-available (like this mod, and every
+# other mod that follows the same install pattern), that find never
+# reaches mods/$mod_name/etc/cron.often at all. Work around it with a
+# direct symlink under the real /etc/cron.often, which find (started at
+# /etc) reaches without needing to follow any symlink first.
+system("/bin/ln -snf $modsa_home/$mod_name/etc/cron.often/gen-console-banner /etc/cron.often/$mod_name");
+
+system("/bin/touch $modsa_home/$mod_name/installed");
+
+print colored("Generating the console banner now....\n", "bold cyan");
+system("$modsa_home/$mod_name/bin/gen-banner.sh");
+
+print colored("The consolebanner mod is now enabled. It refreshes /etc/issue on every RED\n", "bold cyan");
+print colored("change and every 5 minutes; the physical console (tty1-6) already shows\n", "bold cyan");
+print colored("/etc/issue automatically before the login prompt - no further setup needed.\n", "bold cyan");

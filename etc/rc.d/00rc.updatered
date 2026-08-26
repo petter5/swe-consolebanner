@@ -1,0 +1,5 @@
+#!/bin/bash
+# Regenerate the console zone-status banner whenever RED comes up or
+# changes (DHCP bound/renewed, static config applied). Called by
+# rc.updatered's "run mods' 'on RED up' scripts" hook.
+exec /var/smoothwall/mods/consolebanner/bin/gen-banner.sh

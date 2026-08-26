@@ -1,0 +1,18 @@
+#!/bin/bash
+
+###############################################################################
+
+echo "disabling consolebanner................"
+rm -f /var/smoothwall/mods/consolebanner
+rm -f /etc/cron.often/consolebanner
+rm -f /etc/issue
+
+echo "If you would like to re-enable consolebanner at some point in the future, "
+echo "simply run the following commands:"
+echo "	pushd /var/smoothwall/mods; ln -snf ../mods-available/consolebanner consolebanner; popd"
+echo "	/var/smoothwall/mods-available/consolebanner/bin/gen-banner.sh"
+echo
+echo
+echo "If you would like to completely remove consolebanner, run this command:"
+echo "	rm -rf /var/smoothwall/mods-available/consolebanner"
+echo

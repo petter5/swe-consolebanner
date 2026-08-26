@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+
+use Term::ANSIColor;
+
+print color("bold cyan");
+print <<END;
+This script will disable the consolebanner mod and clear /etc/issue. If you
+would like to completely remove it from your system, remove the following
+directory after executing this script:
+END
+print color("reset");
+print colored("\t/var/smoothwall/mods-available/consolebanner\n", "bold green");
+
+system("/bin/rm -f /var/smoothwall/mods/consolebanner");
+system("/bin/rm -f /etc/cron.often/consolebanner");
+system("/bin/rm -f /var/smoothwall/mods-available/consolebanner/installed");
+system("/bin/rm -f /etc/issue");
